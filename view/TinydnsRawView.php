@@ -75,7 +75,7 @@ final class TinydnsRawView {
     }
 
     private function ip6oct($ip) {
-        $groups = ip6normalize($ip);
+        $groups = $this->ip6normalize($ip);
         $result = array();
         foreach($groups as $group) {
             list($hbyte, $lbyte) = str_split($group, 2);
@@ -86,7 +86,7 @@ final class TinydnsRawView {
     }
 
     private function ip6rptr($ip) {
-        $nibbles = array_reverse(str_split(implode(ip6normalize($ip))));
+        $nibbles = array_reverse(str_split(implode($this->ip6normalize($ip))));
         return implode('.', $nibbles) . '.ip6.arpa';
     }
 }
