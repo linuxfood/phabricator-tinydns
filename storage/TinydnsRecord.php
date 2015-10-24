@@ -21,6 +21,7 @@ final class TinydnsRecord extends TinydnsDAO
     // These are from http://cr.yp.to/djbdns/tinydns-data.html
     const ALIAS_RECORD = '+';
     const A_RECORD = '=';
+    const AAAA_RECORD = 'AAAA';
     const CNAME_RECORD = 'C';
     const MX_RECORD = '@';
     const NS_RECORD = '&';
@@ -99,6 +100,9 @@ final class TinydnsRecord extends TinydnsDAO
         case TinydnsRecord::A_RECORD:
             $type = 'A';
             break;
+        case TinydnsRecord::AAAA_RECORD:
+            $type = 'AAAA';
+            break;
         case TinydnsRecord::ALIAS_RECORD:
             $type = 'Alias';
             break;
@@ -138,6 +142,7 @@ final class TinydnsRecord extends TinydnsDAO
 
         switch ($this->getRecordType()) {
         case TinydnsRecord::A_RECORD:
+        case TinydnsRecord::AAAA_RECORD:
         case TinydnsRecord::ALIAS_RECORD:
             $columns['IP'] = id(new AphrontFormTextControl())
                 ->setLabel('IP')

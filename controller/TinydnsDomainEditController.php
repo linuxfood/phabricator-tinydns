@@ -101,6 +101,7 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
 
         $ttt = array(
             'A' => TinydnsRecord::A_RECORD,
+            'AAAA' => TinydnsRecord::AAAA_RECORD,
             'Alias' => TinydnsRecord::ALIAS_RECORD,
             'CNAME' => TinydnsRecord::CNAME_RECORD,
             'MX' => TinydnsRecord::MX_RECORD,
