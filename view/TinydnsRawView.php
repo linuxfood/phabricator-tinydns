@@ -71,7 +71,7 @@ final class TinydnsRawView {
         if ($i !== false) {
             array_splice($groups, $i, 1, array_pad(array(), 9 - count($groups), '0000'));
         }
-        return array_map(function($x) { return sprintf('%04d', $x); }, $groups);
+        return array_map(function($x) { return sprintf('%04s', $x); }, $groups);
     }
 
     private function ip6oct($ip) {

@@ -165,6 +165,12 @@ final class TinydnsRecord extends TinydnsDAO
                 ->setName("$rid". "[data2]")
                 ->setValue($this->getData2());
             break;
+        case TinydnsRecord::TXT_RECORD:
+            $columns['Value'] = id(new AphrontFormTextControl())
+                ->setLabel('Value')
+                ->setName("$rid" . "[data]")
+                ->setValue($this->getData());
+            break;
         case TinydnsRecord::RAW_RECORD:
             $columns['DataType'] = id(new AphrontFormTextControl())
                 ->setLabel('Raw Type')

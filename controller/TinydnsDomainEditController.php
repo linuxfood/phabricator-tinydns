@@ -39,7 +39,7 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
             $domain = $this->getDomain(array(PhabricatorPolicyCapability::CAN_EDIT));
         }
 
-        $page_parts = array();
+        $page_parts = new PHUIBoxView();
         if (!$domain) {
             return new Aphront404Response();
         }
@@ -62,7 +62,6 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
                 $create_domain,
                 $this->getApplicationURI('domain/new/edit/?create=1'));
         }
-        $page_parts[] = $crumbs;
 
         if ($request->isFormPost()) {
             try {
@@ -79,16 +78,16 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
                     }
                 }
                 $domain->saveTransaction();
-                $page_parts[] = id(new PHUIObjectBoxView())
-                    ->appendChild(pht('Records updated! It will take some time for it to propagate.'));
+                $page_parts->appendChild(id(new PHUIObjectBoxView())
+                    ->appendChild(pht('Records updated! It will take some time for it to propagate.')));
                 if ($create) {
                     return id(new AphrontRedirectResponse())
                         ->setURI($this->getApplicationURI('domain/'. $domain->getDomainRoot() .'/edit/'));
                 }
             } catch(Exception $ex) {
                 $domain->killTransaction();
-                $page_parts[] = id(new PHUIObjectBoxView())
-                    ->appendChild(pht('Failed to save domain. I tried to restore what you had. Sowwy.'). $ex);
+                $page_parts->appendChild(id(new PHUIObjectBoxView())
+                    ->appendChild(pht('Failed to save domain. I tried to restore what you had. Sowwy.'). $ex));
             }
         }
 
@@ -170,7 +169,7 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
             id(new AphrontFormSubmitControl())
                 ->setValue($submit_prompt));
 
-        $page_parts[] = $content;
+        $page_parts->appendChild($content);
         $records = mgroup($domain->getRecords(), 'getRecordType');
         $recordsForm = id(new AphrontFormView())
             ->setAction($request->getRequestURI())
@@ -191,9 +190,9 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
                         id(new PhutilURI($this->getApplicationURI('record/create/')))
                         ->setQueryParams(array(
                             'domainPHID' => $domain->getPHID(),
-                            'recordType' => $type)))
-                    ->setIcon(
-                        id(new PHUIIconView())->setIconFont('fa-plus'));
+                            'recordType' => $type)));
+                    #->setIcon(
+                    #    id(new PHUIIconView())->setIconFont('fa-plus'));
             if (!isset($records[$type])) {
                 $typeBox->appendChild($add_record_button);
                 continue;
@@ -208,8 +207,8 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
                     ->setColor('red')
                     ->setTag('a')
                     ->setWorkflow(true)
-                    ->setHref($this->getApplicationURI("record/{$record->getID()}/delete/"))
-                    ->setIcon(id(new PHUIIconView())->setIconFont('fa-trash'));
+                    ->setHref($this->getApplicationURI("record/{$record->getID()}/delete/"));
+                    #->setIcon(id(new PHUIIconView())->setIconFont('fa-trash'));
                 $rows[] = $row;
             }
             $table = new AphrontTableView($rows);
@@ -227,11 +226,9 @@ final class TinydnsDomainEditController extends TinydnsBaseController {
             $content->appendChild($recordsForm);
         }
 
-        return $this->buildApplicationPage(
-            $page_parts,
-            array(
-                'title' => $domain_action_str,
-            )
-        );
+        return $this->newPage()
+            ->setCrumbs($crumbs)
+            ->setTitle($domain_action_str)
+            ->appendChild($page_parts);
     }
 }

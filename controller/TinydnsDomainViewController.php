@@ -28,18 +28,16 @@ final class TinydnsDomainViewController extends TinydnsBaseController {
             $domain->getDomainRoot(),
             $this->getApplicationURI('domain/'. $domain->getDomainRoot()));
 
-        $boxes = array();
+        $boxes = new PHUIBoxView();
         $content = new PHUIObjectBoxView();
         $header = new PHUIHeaderView();
         $header->setHeader($domain->getDomainRoot());
         $header->setUser($request->getViewer());
         $header->setPolicyObject($domain);
-        $boxes[] = $crumbs;
-        $boxes[] = $content;
+        $boxes->appendChild($content);
 
         $actions = id(new PhabricatorActionListView())
             ->setObject($domain)
-            ->setObjectURI($request->getRequestURI())
             ->setUser($request->getViewer());
 
         $can_edit = PhabricatorPolicyFilter::hasCapability(
@@ -80,20 +78,17 @@ final class TinydnsDomainViewController extends TinydnsBaseController {
                         ->setHeader(pht($type .' Records')))
                 ->setTable($tbl)
                 ->setUser($request->getViewer());
-            $boxes[] = $recordList;
+            $boxes->appendChild($recordList);
         }
 
 
         $content->setHeader($header);
         $content->addPropertyList($this->buildPropertyView($domain, $actions));
-        #$content->appendChild($recordList);
 
-        return $this->buildApplicationPage(
-            $boxes,
-            array(
-                'title' => pht('Tinydns Edit'),
-            )
-        );
+        return $this->newPage()
+            ->setCrumbs($crumbs)
+            ->setTitle('Tinydns Edit')
+            ->appendChild($boxes);
     }
 
     private function buildPropertyView(
@@ -111,7 +106,7 @@ final class TinydnsDomainViewController extends TinydnsBaseController {
 
         $view->addProperty(pht('Domain'), $domain->getDomainRoot());
         $view->addProperty(pht('NS1'), $domain->getNs1());
-        $view->addProperty(pht('NS2'), $domain->getNs1());
+        $view->addProperty(pht('NS2'), $domain->getNs2());
         $view->addProperty(pht('Domain TTL'), $domain->getTtl());
         $view->addProperty(pht('Default TTL'), $domain->getDefaultRecordTTL());
         $view->addProperty(pht('Can Edit'), $policy_desc[PhabricatorPolicyCapability::CAN_EDIT]);

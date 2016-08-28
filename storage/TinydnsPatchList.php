@@ -17,12 +17,10 @@
 
 final class TinydnsPatchList extends PhabricatorSQLPatchList {
     public function getNamespace() {
-        // This is 'phabricator' so that the database is created
-        // with the right name: `phabricator_tinydns` instead of 
-        // something else. In theory, this should be 'lfn' or something 
-        // similar, but, then I'd have to jump through weird hoops to 
-        // make the DAO framework do what I want.
-        return 'phabricator';
+        // This produces some weird issues with storage upgrade, but that don't seem to affect
+        // the final result. This used to say phabricator because that made things clean, but
+        // upstream no longer allows that.
+        return 'lfn';
     }
 
     public function getPatches() {
